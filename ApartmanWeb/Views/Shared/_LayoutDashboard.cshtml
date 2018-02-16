@@ -32,14 +32,13 @@
         <link href="~/themes/dashboard-theme/css/sb-admin.min.css" rel="stylesheet">
     </environment>
 </head>
-<body class="bg-dark">
-    <div>
-        @RenderBody()
+<body class="fixed-nav sticky-footer bg-dark" id="page-top">
+
+    @RenderBody()
         <hr />
         <footer>
             <p>&copy; 2018 - ApartmanWeb</p>
         </footer>
-    </div>
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>

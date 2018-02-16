@@ -105,6 +105,14 @@ img::-moz-selection {
         color: #1E90FF;
     }
 
+#mainNav .navbar-nav > li.nav-item > form.nav-link,
+#mainNav .navbar-nav > li.nav-item > form.nav-link:focus {
+    font-size: .9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #212529;
+}
+
 #mainNav .navbar-nav > li.nav-item > a.nav-link,
 #mainNav .navbar-nav > li.nav-item > a.nav-link:focus {
   font-size: .9rem;

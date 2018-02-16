@@ -32,11 +32,10 @@ namespace ApartmanWeb.Controllers
         public IActionResult Index()
         {
             string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
-
             HomeViewModel homeViewModel = new HomeViewModel();
             homeViewModel.ImageCounter = Directory.GetFiles(rootPath).Length / 2;
             homeViewModel.DirectReservation = false;
-            String resultUrl = currentLanguageOrDefault() + "/Index2";
+            String resultUrl = currentLanguageOrDefault() + "/Index";
             return View(resultUrl, homeViewModel);
         }
 

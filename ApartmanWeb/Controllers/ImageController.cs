@@ -26,7 +26,7 @@ namespace ApartmanWeb.Controllers
         public FileResult Get(string guid)
         {
             string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
-            var path = Path.Combine(rootPath, guid + ".jpg"); //validate the path for security or use other means to generate the path.
+            var path = Path.Combine(rootPath, guid + ".jpg");
             return new FileStreamResult(new FileStream(path, FileMode.Open), "image/jpeg");
         }
 
@@ -34,17 +34,33 @@ namespace ApartmanWeb.Controllers
         public FileResult GetResized(string guid)
         {
             string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
-            var path = Path.Combine(rootPath, guid + "tb.jpg"); //validate the path for security or use other means to generate the path.
+            var path = Path.Combine(rootPath, guid + "tb.jpg");
             return new FileStreamResult(new FileStream(path, FileMode.Open), "image/jpeg");
         }
 
+        [HttpGet("Delete/{guid}")]
+        public IActionResult Delete(string guid)
+        {
+            string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
+            var path = Path.Combine(rootPath, guid + ".jpg");
+            var pathtb = Path.Combine(rootPath, guid + "tb.jpg");
+            if (System.IO.File.Exists(path))
+            {
+                System.IO.File.Delete(path);
+            }
+            if (System.IO.File.Exists(pathtb))
+            {
+                System.IO.File.Delete(pathtb);
+            }
+            return RedirectToAction("Images", "Admin");
+        }
 
         [HttpPost]
         public async Task<IActionResult> FileUpload(List<IFormFile> files)
         {
             long size = files.Sum(f => f.Length);
             Debug.WriteLine(_hostEnvironment.WebRootPath);
-            string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\homepage");
+            string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
             Debug.WriteLine(rootPath);
 
             foreach (var formFile in files)
@@ -79,7 +95,8 @@ namespace ApartmanWeb.Controllers
                 }
             }
 
-            return Ok(new { count = files.Count, size, rootPath });
+            //return Ok(new { count = files.Count, size, rootPath });
+            return RedirectToAction("Images", "Admin");
         }
 
     }
