@@ -8,6 +8,7 @@ using ApartmanWeb.Data;
 using Microsoft.AspNetCore.Mvc;
 using ApartmanWeb.Models;
 using ApartmanWeb.Models.AccountViewModels;
+using ImageResizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -18,20 +19,29 @@ using Microsoft.Extensions.Logging;
 
 namespace ApartmanWeb.Controllers
 {
+
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _hostEnvironment;
+        private IApplicationSettingsRepository _appSettingsRepository;
 
 
-        public AdminController(IHostingEnvironment hostEnvironment, ILogger<AdminController> logger, ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+
+        public AdminController(IHostingEnvironment hostEnvironment, 
+            ILogger<AdminController> logger, 
+            ApplicationDbContext context, 
+            UserManager<ApplicationUser> userManager, 
+            IApplicationSettingsRepository appSettingsRepository)
         {
             _userManager = userManager;
             _hostEnvironment = hostEnvironment;
             _logger = logger;
             _context = context;
+            _appSettingsRepository = appSettingsRepository;
         }
 
         public IActionResult AddNewUser()
@@ -42,12 +52,170 @@ namespace ApartmanWeb.Controllers
         public IActionResult Images()
         {
             string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
-            HomeViewModel homeViewModel = new HomeViewModel();
-            homeViewModel.ImageCounter = Directory.GetFiles(rootPath).Length / 2;
+            HomeViewModel homeViewModel = generateHomeViewModel();
+            //homeViewModel.ImageCounter = Directory.GetFiles(rootPath).Length / 2;
             homeViewModel.DirectReservation = false;
             return View(homeViewModel);
         }
 
+        [HttpGet("MoveUp/{guid}")]
+        public IActionResult MoveUp(string guid)
+        {
+            var appSettings = _appSettingsRepository.Get();
+            var imageOrder = appSettings.Order;
+
+            var index1 = -1;
+            var index2 = imageOrder.IndexOf($"-{guid}-");
+            for (int i = 0; i < index2; i++)
+            {
+                if (imageOrder.ElementAt(i).Equals('-'))
+                {
+                    index1 = i;
+                }
+            }
+
+            if (index1 == -1)
+            {
+                return RedirectToAction("Images");
+            }
+
+            index1++; // Pomakni se sa - na sljedeci broj
+
+            var toReplaceId1 = imageOrder.Substring(index1, index2-index1);
+            Debug.WriteLine($"{imageOrder} {index1} {index2} {toReplaceId1}");
+
+            imageOrder = imageOrder.Replace($"-{guid}-", "-r-");
+            imageOrder = imageOrder.Replace($"-{toReplaceId1}-", $"-{guid}-");
+            imageOrder = imageOrder.Replace("-r-", $"-{toReplaceId1}-");
+
+            appSettings.Order = imageOrder;
+            _appSettingsRepository.Update(appSettings);
+            
+            return RedirectToAction("Images");
+        }
+
+        [HttpGet("MoveDown/{guid}")]
+        public IActionResult MoveDown(string guid)
+        {
+            var appSettings = _appSettingsRepository.Get();
+            var imageOrder = appSettings.Order;
+
+            var index1 = imageOrder.IndexOf($"-{guid}-") + guid.Length + 2;
+            var index2 = -1;
+            for (int i = index1; i < imageOrder.Length; i++)
+            {
+                if (imageOrder.ElementAt(i).Equals('-'))
+                {
+                    index2 = i;
+                    break;
+                }
+            }
+
+            if (index2 == -1)
+            {
+                return RedirectToAction("Images");
+            }
+
+            var toReplaceId1 = imageOrder.Substring(index1, index2 - index1);
+            Debug.WriteLine($"{imageOrder} {index1} {index2} {toReplaceId1}");
+
+            imageOrder = imageOrder.Replace($"-{guid}-", "-r-");
+            imageOrder = imageOrder.Replace($"-{toReplaceId1}-", $"-{guid}-");
+            imageOrder = imageOrder.Replace("-r-", $"-{toReplaceId1}-");
+
+            Debug.WriteLine($"{imageOrder}");
+
+            appSettings.Order = imageOrder;
+            _appSettingsRepository.Update(appSettings);
+
+            return RedirectToAction("Images");
+        }
+
+        [HttpGet("Delete/{guid}")]
+        public IActionResult DeleteImage(string guid)
+        {
+            string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
+            var path = Path.Combine(rootPath, guid + ".jpg");
+            var pathtb = Path.Combine(rootPath, guid + "tb.jpg");
+            if (System.IO.File.Exists(path))
+            {
+                var appSettings = _appSettingsRepository.Get();
+                appSettings.Order = appSettings.Order.Replace($"-{guid}-", "-");
+                _appSettingsRepository.Update(appSettings);
+                System.IO.File.Delete(path);
+            }
+            if (System.IO.File.Exists(pathtb))
+            {
+                System.IO.File.Delete(pathtb);
+            }
+            return RedirectToAction("Images", "Admin");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> FileUpload(List<IFormFile> files)
+        {
+            long size = files.Sum(f => f.Length);
+            Debug.WriteLine(_hostEnvironment.WebRootPath);
+            string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
+            Debug.WriteLine(rootPath);
+
+            string toAddInAppSettingsOrder = "";
+            foreach (var formFile in files)
+            {
+                if (!formFile.FileName.ToLower().EndsWith(".jpg") && !formFile.FileName.ToLower().EndsWith(".jpeg") && !formFile.FileName.ToLower().EndsWith(".png"))
+                {
+                    continue;
+                }
+                var allFiles = Directory.GetFiles(rootPath);
+                string filePath = "";
+                string thumbPath = "";
+                int newFileId = -1;
+                for (int i = 0; i < 9999; i++)
+                {
+                    filePath = System.IO.Path.Combine(rootPath, i + ".jpg");
+                    thumbPath = System.IO.Path.Combine(rootPath, i + "tb.jpg");
+                    if (!allFiles.Contains(filePath))
+                    {
+                        newFileId = i;
+                        break;
+                    }
+                }
+                toAddInAppSettingsOrder += $"{newFileId}-";
+
+                if (formFile.Length > 0)
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await formFile.CopyToAsync(stream);
+                    }
+                    using (var stream = new FileStream(filePath, FileMode.Open))
+                    using (var result = new FileStream(thumbPath, FileMode.Create))
+                    {
+
+                        var settings = new ResizeSettings
+                        {
+                            MaxWidth = 200,
+                            MaxHeight = 200,
+                            Format = "jpg"
+                        };
+
+                        ImageBuilder.Current.Build(stream, result, settings);
+                        await formFile.CopyToAsync(result);
+
+                    }
+                }
+            }
+
+            if (!toAddInAppSettingsOrder.Equals(""))
+            {
+                var appSettings = _appSettingsRepository.Get();
+                appSettings.Order += toAddInAppSettingsOrder;
+                _appSettingsRepository.Update(appSettings);
+            }
+
+            //return Ok(new { count = files.Count, size, rootPath });
+            return RedirectToAction("Images", "Admin");
+        }
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -114,76 +282,29 @@ namespace ApartmanWeb.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Register2(RegisterViewModel model, string returnUrl = null)
-        {
-            ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    _logger.LogInformation("Admin created a new account with password.");
-                }
-            }
-
-            // If we got this far, something failed, redisplay form
-            return View(model);
-        }
-
-
-        public IActionResult Index()
-        {
-            string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
-
-            HomeViewModel homeViewModel = new HomeViewModel();
-            homeViewModel.ImageCounter = Directory.GetFiles(rootPath).Length / 2;
-            homeViewModel.DirectReservation = false;
-            String resultUrl = currentLanguageOrDefault() + "/Index";
-            return View(resultUrl, homeViewModel);
-        }
-
-        [HttpGet("SetLanguage/{lang}")]
-        public IActionResult SetLanguage(string lang)
-        {
-            if (lang.Equals("en") || lang.Equals("de") || lang.Equals("hr"))
-            {
-                HttpContext.Session.SetString("lang", lang);
-
-            }
-            return RedirectToAction("Index");
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        [Authorize]
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private string currentLanguageOrDefault()
+        private HomeViewModel generateHomeViewModel()
         {
-            var lang = HttpContext.Session.GetString("lang");
-            if (lang == null)
+            // string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
+            HomeViewModel homeViewModel = new HomeViewModel();
+            var appSettings = _appSettingsRepository.Get();
+            homeViewModel.DirectReservation = appSettings.DirectReservation;
+            var imagesOrder = appSettings.Order;
+            var imageIds = imagesOrder.Split('-');
+            List<int> imagesOrderList = new List<int>();
+            foreach (var id in imageIds)
             {
-                lang = "hr";
+                if (!String.IsNullOrEmpty(id))
+                {
+                    imagesOrderList.Add(int.Parse(id));
+                }
             }
-            return lang;
+            homeViewModel.imageOrder = imagesOrderList;
+            return homeViewModel;
         }
     }
 }

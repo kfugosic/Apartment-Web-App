@@ -24,6 +24,12 @@ body.fixed-nav {
   padding-top: 1rem;
 }
 
+.alert-custom {
+    color: #282929;
+    background-color: #edf4f7;
+    border-color: #D2E7FA;
+}
+
 .scroll-to-top {
   position: fixed;
   right: 15px;

@@ -39,33 +39,37 @@
             </ul>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-                        <i class="fa fa-fw fa-sign-out"></i>Logout
+                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="fa fa-fw fa-sign-out"></i>Početna
                     </a>
                 </li>
             </ul>
         </div>
     </nav>
     <div class="content-wrapper">
+        <div class="col-md-10">
 
-        @foreach (var item in Model.UserIsAdminTupleList)
-        {
-            @item.Item1
-            <span>&nbsp;</span>
-            if (item.Item2 == true)
+            @foreach (var item in Model.UserIsAdminTupleList)
             {
-                <a asp-controller="Admin" asp-action="RemoveAdmin" asp-route-guid="@item.Item1.Id"> Remove admin</a>
+                <div class="alert alert-custom">
+                @item.Item1
+                <span>&emsp;</span>
+                @if (item.Item2 == true)
+                {
+                <a asp-controller="Admin" asp-action="RemoveAdmin" asp-route-guid="@item.Item1.Id" class="btn btn-info"> Makni administratorkse ovlasti</a>
+                }
+                else
+                {
+                <a asp-controller="Admin" asp-action="MakeAdmin" asp-route-guid="@item.Item1.Id" class="btn btn-outline-info "> Postavi administratorske ovlasti</a>
+                }
+                <span>&emsp;</span>
+                <a asp-controller="Admin" asp-action="DeleteAccount" asp-route-guid="@item.Item1.Id" class="btn btn-danger"> Obriši korisnički račun</a>
+            </div>
+                <hr/>
             }
-            else
-            {
-                <a asp-controller="Admin" asp-action="MakeAdmin" asp-route-guid="@item.Item1.Id"> Make admin</a>
-            }
-            <span>&nbsp;</span>
-            <a asp-controller="Admin" asp-action="DeleteAccount" asp-route-guid="@item.Item1.Id">Delete account</a>
-            <br/>
-        }
 
 
-        &nbsp
+            &nbsp
+        </div>
     </div>
 </div>

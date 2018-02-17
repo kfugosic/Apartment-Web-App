@@ -12,6 +12,7 @@ using ApartmanWeb.Data;
 using ApartmanWeb.Models;
 using ApartmanWeb.Services;
 using System.Diagnostics;
+using System.IO;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ApartmanWeb
@@ -28,6 +29,10 @@ namespace ApartmanWeb
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddTransient<IApplicationSettingsRepository, ApplicationSettingsSqlRepository>();
+            services.AddScoped<ApplicationSettingsDbContext>(s => new ApplicationSettingsDbContext(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -45,7 +50,7 @@ namespace ApartmanWeb
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider, IApplicationSettingsRepository appSettingsRepository)
         {
             if (env.IsDevelopment())
             {
@@ -75,6 +80,29 @@ namespace ApartmanWeb
             createRoles.Wait();
             Task initializeAdmin = InitializeAdmin(serviceProvider);
             initializeAdmin.Wait();
+
+            string rootPath = System.IO.Path.Combine(env.WebRootPath, "images\\apartment");
+            GlobalSettings.Order = Directory.GetFiles(rootPath).Length / 2;
+
+            var appSettings = appSettingsRepository.Get();
+            if (appSettings == null)
+            {
+                var allFiles = Directory.GetFiles(rootPath);
+                string imagesOrderString = "-";
+                foreach (var file in allFiles)
+                {
+                    if (file.EndsWith("tb.jpg"))
+                    {
+                        continue;
+                    }
+                    var startIndex = file.LastIndexOf('\\') + 1;
+                    var length = file.LastIndexOf('.') - startIndex;
+                    var nameWithoutExtension = file.Substring(startIndex, length);
+                    imagesOrderString += $"{nameWithoutExtension}-";
+                }
+                ApplicationSettings initialSettings = new ApplicationSettings(false, imagesOrderString);
+                appSettingsRepository.Add(initialSettings);
+            }
         }
 
         private async Task CreateRoles(IServiceProvider serviceProvider)
@@ -102,7 +130,6 @@ namespace ApartmanWeb
                 Email = Configuration["AdminData:AdminEmail"],
             };
             string userPWD = Configuration["AdminData:AdminPassword"];
-   
             ApplicationUser appUser = await UserManager.FindByEmailAsync(admin.Email);
 
             if (appUser == null)

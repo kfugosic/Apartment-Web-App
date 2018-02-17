@@ -113,7 +113,7 @@
     <div class="container-fluid p-0">
         <div class="row no-gutters popup-gallery">
 
-            @for (var i = 0; i < Model.ImageCounter; i++)
+            @foreach (var i in Model.imageOrder)
             {
                 <div class="col-lg-4 col-sm-6">
                     <a class="portfolio-box" href="@Url.Action("Get", "Image", new {guid = @i})">
