@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Isam.Esent.Interop;
 
 namespace ApartmanWeb.Controllers
@@ -20,22 +21,24 @@ namespace ApartmanWeb.Controllers
 
         private readonly IHostingEnvironment _hostEnvironment;
         private IApplicationSettingsRepository _appSettingsRepository;
+        private IGuestReviewsRepository _guestReviewsRepository;
+        private IConfiguration _configuration;
 
-        public HomeController(IHostingEnvironment hostEnvironment, IApplicationSettingsRepository appSettingsRepository)
+        public HomeController(IHostingEnvironment hostEnvironment,
+            IApplicationSettingsRepository appSettingsRepository,
+            IGuestReviewsRepository guestReviewsRepository, 
+            IConfiguration configuration)
         {
             _hostEnvironment = hostEnvironment;
             _appSettingsRepository = appSettingsRepository;
-        }
-
-        public IActionResult Index2()
-        {
-            return View("Index");
+            _guestReviewsRepository = guestReviewsRepository;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
         {
             HomeViewModel homeViewModel = generateHomeViewModel();
-
+            homeViewModel.ReviewsList = _guestReviewsRepository.getApprovedAndWithPermission(); 
             String resultUrl = currentLanguageOrDefault() + "/Index";
             return View(resultUrl, homeViewModel);
         }
@@ -50,21 +53,6 @@ namespace ApartmanWeb.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        [Authorize]
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
@@ -75,7 +63,7 @@ namespace ApartmanWeb.Controllers
             var lang = HttpContext.Session.GetString("lang");
             if (lang == null)
             {
-                lang = "hr";
+                lang = _configuration["AppSettings:DefaultLanguage"];
             }
             return lang;
         }
@@ -96,7 +84,7 @@ namespace ApartmanWeb.Controllers
                     imagesOrderList.Add(int.Parse(id));
                 }
             }
-            homeViewModel.imageOrder = imagesOrderList;
+            homeViewModel.ImageOrder = imagesOrderList;
             return homeViewModel;
         }
     }

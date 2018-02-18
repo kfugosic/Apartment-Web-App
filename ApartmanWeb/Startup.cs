@@ -33,6 +33,9 @@ namespace ApartmanWeb
             services.AddTransient<IApplicationSettingsRepository, ApplicationSettingsSqlRepository>();
             services.AddScoped<ApplicationSettingsDbContext>(s => new ApplicationSettingsDbContext(Configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddTransient<IGuestReviewsRepository, GuestReviewsSqlRepository>();
+            services.AddScoped<GuestReviewsDbContext>(s => new GuestReviewsDbContext(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -82,7 +85,6 @@ namespace ApartmanWeb
             initializeAdmin.Wait();
 
             string rootPath = System.IO.Path.Combine(env.WebRootPath, "images\\apartment");
-            GlobalSettings.Order = Directory.GetFiles(rootPath).Length / 2;
 
             var appSettings = appSettingsRepository.Get();
             if (appSettings == null)

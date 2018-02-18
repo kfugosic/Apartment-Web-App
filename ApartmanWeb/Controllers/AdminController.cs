@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Isam.Esent.Interop;
 using Microsoft.Extensions.Logging;
 
@@ -28,20 +29,24 @@ namespace ApartmanWeb.Controllers
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _hostEnvironment;
         private IApplicationSettingsRepository _appSettingsRepository;
-
-
+        private IGuestReviewsRepository _guestReviewsRepository;
+        private IConfiguration _configuration;
 
         public AdminController(IHostingEnvironment hostEnvironment, 
             ILogger<AdminController> logger, 
             ApplicationDbContext context, 
             UserManager<ApplicationUser> userManager, 
-            IApplicationSettingsRepository appSettingsRepository)
+            IApplicationSettingsRepository appSettingsRepository,
+            IGuestReviewsRepository guestReviewsRepository,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _hostEnvironment = hostEnvironment;
             _logger = logger;
             _context = context;
             _appSettingsRepository = appSettingsRepository;
+            _guestReviewsRepository = guestReviewsRepository;
+            _configuration = configuration;
         }
 
         public IActionResult AddNewUser()
@@ -49,11 +54,50 @@ namespace ApartmanWeb.Controllers
             return View();
         }
 
+        //
+        // REVIEWS
+        //
+
+        public IActionResult Reviews()
+        {
+            ReviewsListModel model = new ReviewsListModel();
+            var allReviews = _guestReviewsRepository.getAll();
+            foreach (var review in allReviews)
+            {
+                model.ReviewsList.Add(review);
+            }
+            return View(model);
+        }
+
+        [HttpGet("Approve/{guid}")]
+        public IActionResult Approve(string guid)
+        {
+            _guestReviewsRepository.setApproved(Guid.Parse(guid));
+            return RedirectToAction("Reviews");
+        }
+
+        [HttpGet("Disapprove/{guid}")]
+        public IActionResult Disapprove(string guid)
+        {
+            _guestReviewsRepository.setDisapproved(Guid.Parse(guid));
+            return RedirectToAction("Reviews");
+        }
+
+        [HttpGet("DeleteReview/{guid}")]
+        public IActionResult DeleteReview(string guid)
+        {
+            _guestReviewsRepository.Remove(Guid.Parse(guid));
+            return RedirectToAction("Reviews");
+        }
+
+        //
+        // IMAGES
+        //
+
         public IActionResult Images()
         {
             string rootPath = System.IO.Path.Combine(_hostEnvironment.WebRootPath, "images\\apartment");
             HomeViewModel homeViewModel = generateHomeViewModel();
-            //homeViewModel.ImageCounter = Directory.GetFiles(rootPath).Length / 2;
             homeViewModel.DirectReservation = false;
             return View(homeViewModel);
         }
@@ -152,7 +196,7 @@ namespace ApartmanWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> FileUpload(List<IFormFile> files)
+        public async Task<IActionResult> FileUpload(List<IFormFile> files, string position)
         {
             long size = files.Sum(f => f.Length);
             Debug.WriteLine(_hostEnvironment.WebRootPath);
@@ -180,7 +224,15 @@ namespace ApartmanWeb.Controllers
                         break;
                     }
                 }
-                toAddInAppSettingsOrder += $"{newFileId}-";
+
+                if (position.Equals("start"))
+                {
+                    toAddInAppSettingsOrder += $"-{newFileId}";
+                }
+                else
+                {
+                    toAddInAppSettingsOrder += $"{newFileId}-";
+                }
 
                 if (formFile.Length > 0)
                 {
@@ -209,13 +261,24 @@ namespace ApartmanWeb.Controllers
             if (!toAddInAppSettingsOrder.Equals(""))
             {
                 var appSettings = _appSettingsRepository.Get();
-                appSettings.Order += toAddInAppSettingsOrder;
+                if (position.Equals("start"))
+                {
+                    appSettings.Order = toAddInAppSettingsOrder + appSettings.Order;
+                }
+                else
+                {
+                    appSettings.Order += toAddInAppSettingsOrder;
+                }
                 _appSettingsRepository.Update(appSettings);
             }
 
             //return Ok(new { count = files.Count, size, rootPath });
             return RedirectToAction("Images", "Admin");
         }
+
+        //
+        // Users
+        //
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
@@ -252,6 +315,10 @@ namespace ApartmanWeb.Controllers
         public async Task<IActionResult> RemoveAdmin(string guid)
         {
             var user = await _userManager.FindByIdAsync(guid);
+            if (user.Email.Equals(_configuration["AdminData:AdminEmail"]))
+            {
+                return RedirectToAction("UserAccounts");
+            }
             await _userManager.RemoveFromRoleAsync(user, "Admin");
             _logger.LogInformation($"{user.Email} removed from admins.");
             return RedirectToAction("UserAccounts");
@@ -269,7 +336,12 @@ namespace ApartmanWeb.Controllers
         public async Task<IActionResult> DeleteAccount(string guid)
         {
             var user = await _userManager.FindByIdAsync(guid);
+            if (user.Email.Equals(_configuration["AdminData:AdminEmail"]))
+            {
+                return RedirectToAction("UserAccounts");
+            }
             await _userManager.DeleteAsync(user);
+            _guestReviewsRepository.RemoveForUser(Guid.Parse(guid));
             _logger.LogInformation($"{user.Email} - {user.PasswordHash} - account deleted.");
             return RedirectToAction("UserAccounts");
         }
@@ -303,7 +375,7 @@ namespace ApartmanWeb.Controllers
                     imagesOrderList.Add(int.Parse(id));
                 }
             }
-            homeViewModel.imageOrder = imagesOrderList;
+            homeViewModel.ImageOrder = imagesOrderList;
             return homeViewModel;
         }
     }

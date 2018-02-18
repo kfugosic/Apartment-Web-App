@@ -11,6 +11,9 @@ namespace ApartmanWeb.Models
         public bool DirectReservation { get; set; }
         public string Order { get; set; }
 
+        /// <summary>
+        /// Emptry constructor, should not be used. (Only for EF)
+        /// </summary>
         public ApplicationSettings()
         {
         }

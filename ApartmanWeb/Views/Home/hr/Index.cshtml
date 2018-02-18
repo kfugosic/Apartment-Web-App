@@ -7,50 +7,53 @@
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div class="container">
-            <a href="@Url.Action("SetLanguage", "Home", new {lang="hr"})"><img src="~/images/lang-icons/hr.png" alt="HR" /> </a>
-            <a href="@Url.Action("SetLanguage", "Home", new {lang="en"})"><img src="~/images/lang-icons/en.png" alt="EN" /> </a>
-            <a href="@Url.Action("SetLanguage", "Home", new {lang="de"})"><img src="~/images/lang-icons/de.png" alt="DE" /> </a>
-            &nbsp&nbsp&nbsp
-            <a class="navbar-brand js-scroll-trigger" href="#page-top">My Dream</a>
-            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-                <ul class="navbar-nav ml-auto">
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#about">O nama</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#info">Informacije</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#gallery">Galerija</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#reservation">Rezerviraj</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link js-scroll-trigger" href="#contact">Kontakt</a>
-                    </li>
-                    @await Html.PartialAsync("_LoginPartial")
-                </ul>
+        <a href="@Url.Action("SetLanguage", "Home", new {lang="hr"})"><img src="~/images/lang-icons/hr.png" alt="HR" /> </a>
+        <a href="@Url.Action("SetLanguage", "Home", new {lang="en"})"><img src="~/images/lang-icons/en.png" alt="EN" /> </a>
+        <!-- <a href="@Url.Action("SetLanguage", "Home", new {lang="de"})"><img src="~/images/lang-icons/de.png" alt="DE" /> </a> -->
+        &nbsp&nbsp&nbsp
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">My Dream</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#about">O nama</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#info">Informacije</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#gallery">Galerija</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#reservation">Rezerviraj</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link js-scroll-trigger" href="#contact">Kontakt</a>
+                </li>
+                @await Html.PartialAsync("_LoginPartial")
+            </ul>
 
-            </div>
-</div>
+        </div>
+    </div>
 </nav>
 
 <header class="masthead text-center text-white d-flex">
     <div class="container my-auto">
         <div class="row">
             <div class="col-lg-10 mx-auto">
-                <h1 class="text-uppercase">
-                    <strong>Your Favorite Source of Free Bootstrap Themes</strong>
-                </h1>
+                    <h2 class="text-uppercase">
+                        Kuća za odmor <br />
+                    </h2>
+                    <span class="main-title">
+                            My Dream
+                    </span>
                 <hr>
             </div>
             <div class="col-lg-8 mx-auto">
-                <p class="text-faded mb-5">Start Bootstrap can help you build better websites using the Bootstrap CSS framework! Just download your template and start going, no strings attached!</p>
-                <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Find Out More</a>
+                <p class="text-faded mb-5">Gostinjac, Krk, Hrvatska</p>
+                <a class="btn btn-primary btn-xl js-scroll-trigger" href="#about">Pokaži mi više</a>
             </div>
         </div>
     </div>
@@ -67,7 +70,7 @@
                     pravi je izbor za vas. Smještena u malom otočnom mjestu Gostinjac okružena cvijećem i
                     eko-voćem lijepo je i ugodno uređena. Uživajte u pripremanju svojih specijaliteta na vanjskom roštilju u krugu obitelji i prijatelja.
                 </p>
-                <a class="btn btn-light btn-xl js-scroll-trigger" href="#services">Saznaj više!</a>
+                <a class="btn btn-light btn-xl js-scroll-trigger" href="#info">Saznaj više!</a>
             </div>
         </div>
     </div>
@@ -81,7 +84,7 @@
                 <div class="service-box mt-5 mx-auto">
                     <i class="fa fa-4x fa-home text-primary mb-3 sr-icons"></i>
                     <h3 class="mb-3">Kuća za odmor</h3>
-                    <p class="text-muted mb-0">Uživajte u svom miru.</p>
+                    <p class="text-muted mb-0">Provedite vrijeme u vlastitom miru unutar 74m2.</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 text-center">
@@ -113,20 +116,43 @@
     <div class="container-fluid p-0">
         <div class="row no-gutters popup-gallery">
 
-            @foreach (var i in Model.imageOrder)
+            @foreach (var i in Model.ImageOrder)
             {
-                <div class="col-lg-4 col-sm-6">
-                    <a class="portfolio-box" href="@Url.Action("Get", "Image", new {guid = @i})">
-                        <img class="img-fluid" src="@Url.Action("Get", "Image", new {guid = @i})" alt=""/>
-                        <div class="portfolio-box-caption">
-                            <div class="portfolio-box-caption-content">
+                <div class="col-lg-4 col-sm-6 col-centered-no-margins-tb">
+                    <div class="col-centered-no-margins-tb">
+                        <a class="portfolio-box" href="@Url.Action("Get", "Image", new {guid = @i})">
+                            <img class="img-fluid" src="@Url.Action("Get", "Image", new {guid = @i})" alt=""/>
+                            <div class="portfolio-box-caption">
+                                <div class="portfolio-box-caption-content">
+                                </div>
                             </div>
-                        </div>
-
-                    </a>
+                        </a>
+                    </div>
                 </div>
             }
         </div>
+    </div>
+</section>
+
+<section class="p-0" id="reviews">
+    <div class="row">
+        @foreach (var review in Model.ReviewsList)
+        {
+            <div class="col-sm-3 col-centered">
+                <div class="col-padding">
+                    <div class="review-left">
+                        @review.Name, @review.Country
+                    </div>
+                    <div class="review-right">
+                        @review.Score/5
+                    </div>
+                    <div>
+                        <br><hr>
+                        @review.Review
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </section>
 
@@ -137,7 +163,7 @@
             {
                     <div class="col-lg-10 mx-auto text-center">
                         <p class="mb-2">
-                            Direktne rezervacije su trenutno onemogućene, molimo vas da koristite stranice agencije.
+                            Više detalja i opcije za rezervacije možete pronaći na stranici agencije: <br />
                         </p>
                         <p class="mb-5">
                             <a href="https://www.novasol.com/holidayhome/croatia/holiday-home-krk-dobrinj-ckk832">
@@ -174,14 +200,5 @@
     </div>
 </section>
 
-<!-- Bootstrap core JavaScript -->
-<script src="~/themes/main-theme/vendor/jquery/jquery.min.js"></script>
-<script src="~/themes/main-theme/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-<!-- Plugin JavaScript -->
-<script src="~/themes/main-theme/vendor/jquery-easing/jquery.easing.min.js"></script>
-<script src="~/themes/main-theme/vendor/scrollreveal/scrollreveal.min.js"></script>
-<script src="~/themes/main-theme/vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
 
-<!-- Custom scripts for this template -->
-<script src="~/themes/main-theme/js/creative.min.js"></script>

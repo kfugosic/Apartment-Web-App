@@ -20,5 +20,11 @@
     "inputFiles": [
       "wwwroot/themes/dashboard-theme/vendor/datatables/dataTables.bootstrap4.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/themes/dashboard-theme/css/sb-admin.min.css",
+    "inputFiles": [
+      "wwwroot/themes/dashboard-theme/css/sb-admin.css"
+    ]
   }
 ]

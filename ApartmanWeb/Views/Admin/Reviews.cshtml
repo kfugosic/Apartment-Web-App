@@ -1,0 +1,63 @@
+﻿@using System.Collections.Generic
+@using System.Linq
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
+@model ReviewsListModel
+
+@{
+    ViewData["Title"] = "Log in";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<!-- Navigation-->
+<div>
+    @await Html.PartialAsync("_DashboardNavPartial")
+    <div class="content-wrapper">
+        <div class="col-md-10">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Ime</th>
+                    <th>Drzava</th>
+                    <th>Recenzija</th>
+                    <th>Pohvale i preporuke</th>
+                    <th>Ocjena</th>
+                    <th>Dozvola gosta</th>
+                    <th>Potvrđeno</th>
+                    <th>Datum</th>
+                    <th>Prikaz na naslovnoj</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var review in Model.ReviewsList)
+                {
+                    <tr>
+
+                        <td>@review.Name</td>
+                        <td>@review.Country</td>
+                        <td>@review.Review</td>
+                        <td>@review.Suggestions</td>
+                        <td>@review.Score</td>
+                        <td>@review.GuestPermission</td>
+                        <td>@review.Approved</td>
+                        <td>@review.DateCreated</td>
+                        <td>
+                            @if (review.Approved)
+                            {
+                                <a asp-controller="Admin" asp-action="Disapprove" asp-route-guid="@review.Id" class="btn btn-warning"> Makni</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Admin" asp-action="Approve" asp-route-guid="@review.Id" class="btn btn-success"> Stavi</a>
+                            }
+                            <br/>
+                            <a asp-controller="Admin" asp-action="DeleteReview" asp-route-guid="@review.Id" class="btn btn-danger"> Obriši</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,47 @@
+﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <div class="navbar-brand">
+        <a href="@Url.Action("SetLanguage", "Home", new {lang="hr"})"><img src="~/images/lang-icons/hr.png" alt="HR" /> </a>
+        <a href="@Url.Action("SetLanguage", "Home", new {lang="en"})"><img src="~/images/lang-icons/en.png" alt="EN" /> </a>
+        <!-- <a href="@Url.Action("SetLanguage", "Home", new {lang="de"})"><img src="~/images/lang-icons/de.png" alt="DE" /> </a> -->
+        Kutak za goste..
+    </div>
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="@Url.Action("GeneralInfo", "GuestsPage")">
+                    <span class="nav-link-text">Opće informacije</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="@Url.Action("BeforeArrival", "GuestsPage")">
+                    <span class="nav-link-text">Prije dolaska</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="@Url.Action("DuringStay", "GuestsPage")">
+                    <span class="nav-link-text">Za vrijeme boravka</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="@Url.Action("DayOfDeparture", "GuestsPage")">
+                    <span class="nav-link-text">Na dan odlaska</span>
+                </a>
+            </li>
+            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                <a class="nav-link" href="@Url.Action("ReviewPage", "GuestsPage")">
+                    <span class="nav-link-text">Recenzija i savjeti</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fa fa-fw fa-sign-out"></i>Početna
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

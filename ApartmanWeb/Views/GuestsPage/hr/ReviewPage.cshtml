@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Log in";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+@model ReviewModel
+
+<!-- Navigation-->
+<div>
+    @await Html.PartialAsync("hr/_GuestNavPartial")
+    <div class="content-wrapper">
+
+        <div class="col-md-10">
+            <div class="col-md-4">
+                <form asp-action="UpdateReview" asp-controller="GuestsPage" id="check-register" method="post">
+                    <h4>Ostavi recenziju</h4>
+                    <hr />
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="form-group">
+                        <label>Ime</label>
+                        <input asp-for="Name" value="@Model.Name" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Država</label>
+                        <select asp-for="Country" class="form-control" required >
+                            @await Html.PartialAsync("CountryOptions")
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Recenzija</label>
+                        <textarea rows="4" cols="50" asp-for="Review" class="form-control" ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Pohvale i prijedlozi</label>
+                        <textarea rows="8" cols="50" asp-for="Suggestions" class="form-control"></textarea> 
+                    </div>
+                    <div class="form-group">
+                        <label>Ocjena</label>
+                        <select asp-for="Score" class="form-control" required >
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        Slažete li se da vašu recenziju zajedno sa imenom i državom prikažemo na naslovnoj stranici: &nbsp;
+                        <br/>
+                        <input type="checkbox" asp-for="GuestPermission" value="true"/> Slažem se
+                    </div>
+                    <button type="submit" class="btn btn-default">Pošalji</button>
+                </form>
+                <br/>
+            </div>
+
+        </div>
+
+    </div>
+</div>

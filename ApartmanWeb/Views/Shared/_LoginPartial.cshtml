@@ -6,31 +6,39 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-<li class="nav-item">
-    @{
-        var user = await UserManager.GetUserAsync(User);
-    }
+
+    <li class="nav-item">
+        <a class="nav-link text-primary" asp-area="" asp-controller="GuestsPage" asp-action="GeneralInfo">
+            Kutak za goste
+        </a>
+    </li>
+
+    var user = await UserManager.GetUserAsync(User);
     
-    @if (await UserManager.IsInRoleAsync(user, "Admin"))
+    if (await UserManager.IsInRoleAsync(user, "Admin"))
     {
-        <form display: inline-flex class="nav-link" asp-area="" asp-controller="Admin" asp-action="UserAccounts" title="Manage">
-            <button type="submit" class="btn btn-link navbar-btn navbar-link" title="Dashboard">
-                <i class="fa fa-2x fa-cogs text-primary mb-3"></i>
-            </button>
-        </form>
+        <li class="nav-item">
+
+            <form display: inline-flex class="nav-link" asp-area="" asp-controller="Admin" asp-action="UserAccounts" title="Control panel">
+                <button type="submit" class="btn btn-link navbar-btn navbar-link" title="Dashboard">
+                    <i class="fa fa-2x fa-cogs text-primary mb-3"></i>
+                </button>
+            </form>
+        </li>
+
     }
     @*@<a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Dashboard" title="Manage">
             <i class="fa fa-2x fa-cogs text-primary mb-3 sr-icons"></i>
         </a>*@
-</li>
     @*   <li class="nav-item">
             <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Logout"  method="post" id="logoutForm">Log out</a>
         </li>
     *@
+
     <li class="nav-item">
         <form display: inline-flex asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="nav-link">
             <button type="submit" class="btn btn-link navbar-btn navbar-link" title="Log out">
-                <i class="fa fa-2x fa-sign-out text-primary mb-3"></i>
+                <i class="fa fa-2x fa-sign-out  mb-3"></i>
             </button>
         </form>
     </li>
