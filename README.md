@@ -7,12 +7,14 @@ Mogućnosti gosta:
 -	Pregled naslovne stranice
 -	Mjenjanje jezika
 -	Prijava
+
 Mogućnosti registrirang korisnika:
 -	Sve što i gost
 -	Pristup posebnoj stranici za goste koja sadrži korisne informacije
 -	Ostavljanje recenzije
   o	Korisnik može više puta uređivati vlastitu recenziju
   o	Korisnik može dozvoliti ili zabraniti da se njegova recenzija prikazuje na naslovnoj stranici
+  
 Mogućnosti administratora:
 -	Sve što  i registrirani korisnik
 -	Pristup posebnoj stranici za upravljanje web aplikacijom
