@@ -1,5 +1,3 @@
-using System;
-
 namespace ApartmanWeb.Models
 {
     public class ErrorViewModel

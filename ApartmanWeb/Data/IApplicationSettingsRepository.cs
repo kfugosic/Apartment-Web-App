@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using ApartmanWeb.Models;
+﻿using ApartmanWeb.Models;
 
 namespace ApartmanWeb.Data
 {

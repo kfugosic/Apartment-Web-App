@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Migrations;
-using System.Diagnostics;
+﻿using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Threading.Tasks;
 using ApartmanWeb.Models;
 
 namespace ApartmanWeb.Data
@@ -37,7 +33,7 @@ namespace ApartmanWeb.Data
 
         public bool Remove(int id)
         {
-            var item = _dbContext.AppSettings.Single(t => t.Id == id);
+            var item = _dbContext.AppSettings.FirstOrDefault(t => t.Id == id);
             if (item == null)
             {
                 return false;
@@ -49,7 +45,7 @@ namespace ApartmanWeb.Data
 
         public bool Update(ApplicationSettings newSettings)
         {
-            var item = _dbContext.AppSettings.Single(t => t.Id == newSettings.Id);
+            var item = _dbContext.AppSettings.FirstOrDefault(t => t.Id == newSettings.Id);
             if (item == null)
             {
                 return false;

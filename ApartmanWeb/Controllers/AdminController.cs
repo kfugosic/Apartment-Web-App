@@ -12,15 +12,12 @@ using ImageResizer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Isam.Esent.Interop;
 using Microsoft.Extensions.Logging;
 
 namespace ApartmanWeb.Controllers
 {
-
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
@@ -28,14 +25,14 @@ namespace ApartmanWeb.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger;
         private readonly IHostingEnvironment _hostEnvironment;
-        private IApplicationSettingsRepository _appSettingsRepository;
-        private IGuestReviewsRepository _guestReviewsRepository;
-        private IConfiguration _configuration;
+        private readonly IApplicationSettingsRepository _appSettingsRepository;
+        private readonly IGuestReviewsRepository _guestReviewsRepository;
+        private readonly IConfiguration _configuration;
 
-        public AdminController(IHostingEnvironment hostEnvironment, 
-            ILogger<AdminController> logger, 
-            ApplicationDbContext context, 
-            UserManager<ApplicationUser> userManager, 
+        public AdminController(IHostingEnvironment hostEnvironment,
+            ILogger<AdminController> logger,
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
             IApplicationSettingsRepository appSettingsRepository,
             IGuestReviewsRepository guestReviewsRepository,
             IConfiguration configuration)
@@ -47,11 +44,6 @@ namespace ApartmanWeb.Controllers
             _appSettingsRepository = appSettingsRepository;
             _guestReviewsRepository = guestReviewsRepository;
             _configuration = configuration;
-        }
-
-        public IActionResult AddNewUser()
-        {
-            return View();
         }
 
         //
@@ -66,6 +58,7 @@ namespace ApartmanWeb.Controllers
             {
                 model.ReviewsList.Add(review);
             }
+
             return View(model);
         }
 
@@ -125,7 +118,7 @@ namespace ApartmanWeb.Controllers
 
             index1++; // Pomakni se sa - na sljedeci broj
 
-            var toReplaceId1 = imageOrder.Substring(index1, index2-index1);
+            var toReplaceId1 = imageOrder.Substring(index1, index2 - index1);
             Debug.WriteLine($"{imageOrder} {index1} {index2} {toReplaceId1}");
 
             imageOrder = imageOrder.Replace($"-{guid}-", "-r-");
@@ -134,7 +127,7 @@ namespace ApartmanWeb.Controllers
 
             appSettings.Order = imageOrder;
             _appSettingsRepository.Update(appSettings);
-            
+
             return RedirectToAction("Images");
         }
 
@@ -188,10 +181,12 @@ namespace ApartmanWeb.Controllers
                 _appSettingsRepository.Update(appSettings);
                 System.IO.File.Delete(path);
             }
+
             if (System.IO.File.Exists(pathtb))
             {
                 System.IO.File.Delete(pathtb);
             }
+
             return RedirectToAction("Images", "Admin");
         }
 
@@ -206,10 +201,12 @@ namespace ApartmanWeb.Controllers
             string toAddInAppSettingsOrder = "";
             foreach (var formFile in files)
             {
-                if (!formFile.FileName.ToLower().EndsWith(".jpg") && !formFile.FileName.ToLower().EndsWith(".jpeg") && !formFile.FileName.ToLower().EndsWith(".png"))
+                if (!formFile.FileName.ToLower().EndsWith(".jpg") && !formFile.FileName.ToLower().EndsWith(".jpeg") &&
+                    !formFile.FileName.ToLower().EndsWith(".png"))
                 {
                     continue;
                 }
+
                 var allFiles = Directory.GetFiles(rootPath);
                 string filePath = "";
                 string thumbPath = "";
@@ -240,10 +237,10 @@ namespace ApartmanWeb.Controllers
                     {
                         await formFile.CopyToAsync(stream);
                     }
+
                     using (var stream = new FileStream(filePath, FileMode.Open))
                     using (var result = new FileStream(thumbPath, FileMode.Create))
                     {
-
                         var settings = new ResizeSettings
                         {
                             MaxWidth = 200,
@@ -253,7 +250,6 @@ namespace ApartmanWeb.Controllers
 
                         ImageBuilder.Current.Build(stream, result, settings);
                         await formFile.CopyToAsync(result);
-
                     }
                 }
             }
@@ -269,6 +265,7 @@ namespace ApartmanWeb.Controllers
                 {
                     appSettings.Order += toAddInAppSettingsOrder;
                 }
+
                 _appSettingsRepository.Update(appSettings);
             }
 
@@ -280,20 +277,27 @@ namespace ApartmanWeb.Controllers
         // Users
         //
 
+        public IActionResult AddNewUser()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser {UserName = model.Email, Email = model.Email};
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Admin created a new account with password.");
                     return RedirectToAction("UserAccounts");
                 }
+
                 AddErrors(result);
             }
+
             return View("AddNewUser", model);
         }
 
@@ -306,6 +310,7 @@ namespace ApartmanWeb.Controllers
                 bool isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
                 tupleList.Add((user, isAdmin));
             }
+
             UsersListModel model = new UsersListModel();
             model.UserIsAdminTupleList = tupleList;
             return View(model);
@@ -319,10 +324,12 @@ namespace ApartmanWeb.Controllers
             {
                 return RedirectToAction("UserAccounts");
             }
+
             await _userManager.RemoveFromRoleAsync(user, "Admin");
             _logger.LogInformation($"{user.Email} removed from admins.");
             return RedirectToAction("UserAccounts");
         }
+
         [HttpGet("MakeAdmin/{guid}")]
         public async Task<IActionResult> MakeAdmin(string guid)
         {
@@ -340,6 +347,7 @@ namespace ApartmanWeb.Controllers
             {
                 return RedirectToAction("UserAccounts");
             }
+
             await _userManager.DeleteAsync(user);
             _guestReviewsRepository.RemoveForUser(Guid.Parse(guid));
             _logger.LogInformation($"{user.Email} - {user.PasswordHash} - account deleted.");
@@ -356,7 +364,7 @@ namespace ApartmanWeb.Controllers
 
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
 
         private HomeViewModel generateHomeViewModel()
@@ -375,6 +383,7 @@ namespace ApartmanWeb.Controllers
                     imagesOrderList.Add(int.Parse(id));
                 }
             }
+
             homeViewModel.ImageOrder = imagesOrderList;
             return homeViewModel;
         }

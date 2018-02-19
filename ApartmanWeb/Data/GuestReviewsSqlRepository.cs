@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Threading.Tasks;
 using ApartmanWeb.Models;
 
 namespace ApartmanWeb.Data
@@ -23,7 +22,7 @@ namespace ApartmanWeb.Data
 
         public bool Remove(Guid id)
         {
-            GuestReview review = _dbContext.GuestReviews.Single(t => t.Id == id);
+            GuestReview review = _dbContext.GuestReviews.FirstOrDefault(t => t.Id == id);
             if (review == null)
             {
                 return false;
@@ -35,7 +34,7 @@ namespace ApartmanWeb.Data
 
         public bool RemoveForUser(Guid userId)
         {
-            GuestReview review = _dbContext.GuestReviews.Single(t => t.GuestUserId == userId);
+            GuestReview review = _dbContext.GuestReviews.FirstOrDefault(t => t.GuestUserId == userId);
             if (review == null)
             {
                 return false;

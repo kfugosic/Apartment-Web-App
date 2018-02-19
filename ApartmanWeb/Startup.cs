@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
@@ -11,9 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ApartmanWeb.Data;
 using ApartmanWeb.Models;
 using ApartmanWeb.Services;
-using System.Diagnostics;
 using System.IO;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ApartmanWeb
 {
@@ -26,7 +22,6 @@ namespace ApartmanWeb
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
@@ -43,7 +38,6 @@ namespace ApartmanWeb
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc()
@@ -52,7 +46,6 @@ namespace ApartmanWeb
 
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider, IApplicationSettingsRepository appSettingsRepository)
         {
             if (env.IsDevelopment())
@@ -109,22 +102,22 @@ namespace ApartmanWeb
 
         private async Task CreateRoles(IServiceProvider serviceProvider)
         {
-            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            string[] roleNames = { "Admin", "Member" };
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            string[] roleNames = { "Admin" };
 
             foreach (var roleName in roleNames)
             {
-                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
                 if (!roleExist)
                 {
-                    var roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                    var roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
                 }
             }
         }
 
         private async Task InitializeAdmin(IServiceProvider serviceProvider)
         {
-            var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             var admin = new ApplicationUser
             {
@@ -132,21 +125,19 @@ namespace ApartmanWeb
                 Email = Configuration["AdminData:AdminEmail"],
             };
             string userPWD = Configuration["AdminData:AdminPassword"];
-            ApplicationUser appUser = await UserManager.FindByEmailAsync(admin.Email);
+            ApplicationUser appUser = await userManager.FindByEmailAsync(admin.Email);
 
             if (appUser == null)
             {
-                ApplicationUser newAppUser = new ApplicationUser
+                appUser = new ApplicationUser
                 {
                     Email = admin.Email,
                     UserName = admin.UserName
                 };
 
-                var taskCreateAppUser = await UserManager.CreateAsync(newAppUser, userPWD);
-                appUser = newAppUser;
-                
+                var taskCreateAppUser = await userManager.CreateAsync(appUser, userPWD);
+                await userManager.AddToRoleAsync(appUser, "Admin");
             }
-            await UserManager.AddToRoleAsync(appUser, "Admin");
         }
     }
 }

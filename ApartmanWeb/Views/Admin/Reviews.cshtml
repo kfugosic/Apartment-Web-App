@@ -1,15 +1,10 @@
-﻿@using System.Collections.Generic
-@using System.Linq
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Http.Authentication
-@model ReviewsListModel
+﻿@model ReviewsListModel
 
 @{
     ViewData["Title"] = "Log in";
     Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
 }
 
-<!-- Navigation-->
 <div>
     @await Html.PartialAsync("_DashboardNavPartial")
     <div class="content-wrapper">
@@ -51,7 +46,7 @@
                                 <a asp-controller="Admin" asp-action="Approve" asp-route-guid="@review.Id" class="btn btn-success"> Stavi</a>
                             }
                             <br/>
-                            <a asp-controller="Admin" asp-action="DeleteReview" asp-route-guid="@review.Id" class="btn btn-danger"> Obriši</a>
+                            <!-- <a asp-controller="Admin" asp-action="DeleteReview" asp-route-guid="@review.Id" class="btn btn-danger"> Obriši</a>-->
                         </td>
                     </tr>
                 }

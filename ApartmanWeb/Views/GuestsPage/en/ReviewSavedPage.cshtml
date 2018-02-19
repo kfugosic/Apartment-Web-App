@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Guest corner";
+    Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+@model ReviewModel
+
+<div>
+    @await Html.PartialAsync("en/_GuestNavPartial")
+    <div class="content-wrapper">
+
+        <div class="col-md-6">
+
+            Thank you for Your time! <br />
+            We appreciate your review and we will consider every critic!
+
+        </div>
+
+    </div>
+</div>

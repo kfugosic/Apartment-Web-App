@@ -1,24 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using ApartmanWeb.Data;
 using Microsoft.AspNetCore.Mvc;
 using ApartmanWeb.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Isam.Esent.Interop;
 
 namespace ApartmanWeb.Controllers
 {
     public class HomeController : Controller
     {
-
         private readonly IHostingEnvironment _hostEnvironment;
         private IApplicationSettingsRepository _appSettingsRepository;
         private IGuestReviewsRepository _guestReviewsRepository;
@@ -26,7 +19,7 @@ namespace ApartmanWeb.Controllers
 
         public HomeController(IHostingEnvironment hostEnvironment,
             IApplicationSettingsRepository appSettingsRepository,
-            IGuestReviewsRepository guestReviewsRepository, 
+            IGuestReviewsRepository guestReviewsRepository,
             IConfiguration configuration)
         {
             _hostEnvironment = hostEnvironment;
@@ -38,8 +31,9 @@ namespace ApartmanWeb.Controllers
         public IActionResult Index()
         {
             HomeViewModel homeViewModel = generateHomeViewModel();
-            homeViewModel.ReviewsList = _guestReviewsRepository.getApprovedAndWithPermission(); 
+            homeViewModel.ReviewsList = _guestReviewsRepository.getApprovedAndWithPermission();
             String resultUrl = currentLanguageOrDefault() + "/Index";
+            Debug.WriteLine(resultUrl);
             return View(resultUrl, homeViewModel);
         }
 
@@ -50,12 +44,13 @@ namespace ApartmanWeb.Controllers
             {
                 HttpContext.Session.SetString("lang", lang);
             }
+
             return RedirectToAction("Index");
         }
 
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
 
         private string currentLanguageOrDefault()
@@ -65,6 +60,7 @@ namespace ApartmanWeb.Controllers
             {
                 lang = _configuration["AppSettings:DefaultLanguage"];
             }
+
             return lang;
         }
 
@@ -84,6 +80,7 @@ namespace ApartmanWeb.Controllers
                     imagesOrderList.Add(int.Parse(id));
                 }
             }
+
             homeViewModel.ImageOrder = imagesOrderList;
             return homeViewModel;
         }

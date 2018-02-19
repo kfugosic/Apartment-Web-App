@@ -1,8 +1,4 @@
-﻿@using System.Collections.Generic
-@using System.Linq
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Http.Authentication
-@model RegisterViewModel
+﻿@model RegisterViewModel
 
 @{
     ViewData["Title"] = "Log in";
@@ -36,16 +32,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $("#check-register").ready(function(){
-        var date_input=$('input[name="from"]'); //our date input has the name "date"
-        var container=$('.bootstrap-iso').length>0 ? $('.bootstrap-iso').parent() : "body";
-        date_input.datepicker({
-            format: 'dd/mm/yyyy',
-            container: container,
-            todayHighlight: true,
-            autoclose: true,
-        })
-    })
-</script>

@@ -1,41 +1,41 @@
 ﻿@{
-    ViewData["Title"] = "Kutak za goste";
+    ViewData["Title"] = "Guest corner";
     Layout = "~/Views/Shared/_LayoutDashboard.cshtml";
 }
 
 @model ReviewModel
 
 <div>
-    @await Html.PartialAsync("hr/_GuestNavPartial")
+    @await Html.PartialAsync("en/_GuestNavPartial")
     <div class="content-wrapper">
 
         <div class="col-md-10">
             <div class="col-md-4">
                 <form asp-action="UpdateReview" asp-controller="GuestsPage" id="check-register" method="post">
-                    <h4>Ostavi recenziju</h4>
+                    <h4>Review</h4>
                     <hr />
                     <div asp-validation-summary="All" class="text-danger"></div>
                     <div class="form-group">
-                        <label>Ime</label>
+                        <label>Name</label>
                         <input asp-for="Name" value="@Model.Name" class="form-control" required />
                     </div>
                     <div class="form-group">
-                        <label>Država</label>
-                        <select asp-for="Country" class="form-control" required >
+                        <label>Country</label>
+                        <select asp-for="Country" class="form-control" required>
                             @await Html.PartialAsync("CountryOptions")
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Recenzija</label>
-                        <textarea rows="4" cols="50" asp-for="Review" class="form-control" ></textarea>
+                        <label>Review</label>
+                        <textarea rows="4" cols="50" asp-for="Review" class="form-control"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Pohvale i prijedlozi</label>
-                        <textarea rows="8" cols="50" asp-for="Suggestions" class="form-control"></textarea> 
+                        <label>Comments and suggestions</label>
+                        <textarea rows="8" cols="50" asp-for="Suggestions" class="form-control"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Koliko ste bili zadovoljni našom uslugom i smještajem</label>
-                        <select asp-for="Score" class="form-control" required >
+                        <label>How satisfied were you with our service and  with apartment</label>
+                        <select asp-for="Score" class="form-control" required>
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>
@@ -44,13 +44,13 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        Slažete li se da vašu recenziju zajedno sa imenom i državom prikažemo na naslovnoj stranici? &nbsp;
-                        <br/>
-                        <input type="checkbox" asp-for="GuestPermission" value="true"/> Slažem se
+                        Do you agree that your review, along with your name and country, is displayed on the front page? &nbsp;
+                        <br />
+                        <input type="checkbox" asp-for="GuestPermission" value="true" /> I agree
                     </div>
-                    <button type="submit" class="btn btn-default">Pošalji</button>
+                    <button type="submit" class="btn btn-default">Send</button>
                 </form>
-                <br/>
+                <br />
             </div>
 
         </div>
