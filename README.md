@@ -1,5 +1,7 @@
 # Apartment-Web-App
 C# Course @ FER - Final project - Apartment Web App
+http://mydream-krk.azurewebsites.net/
+
 
 Tema projekta je jednostavna web aplikacija za apartman. U nastavku su opisane implementirane funkcionalnosti:
 
@@ -11,22 +13,27 @@ Mogućnosti gosta:
 Mogućnosti registrirang korisnika:
 -	Sve što i gost
 -	Pristup posebnoj stranici za goste koja sadrži korisne informacije
--	Ostavljanje recenzije
-  o	Korisnik može više puta uređivati vlastitu recenziju
-  o	Korisnik može dozvoliti ili zabraniti da se njegova recenzija prikazuje na naslovnoj stranici
+- Ostavljanje recenzije
+
+  - Korisnik može više puta uređivati vlastitu recenziju
+  - Korisnik može dozvoliti ili zabraniti da se njegova recenzija prikazuje na naslovnoj stranici
   
 Mogućnosti administratora:
 -	Sve što  i registrirani korisnik
 -	Pristup posebnoj stranici za upravljanje web aplikacijom
 -	Upravljanje slikama
-  o	Dodavanje, brisanje i mjenjanje redoslijeda
+  - Dodavanje, brisanje i mjenjanje redoslijeda
+  
 -	Upravljanje korisničkim računima
-  o	Stvaranje novog korisničkog računa za gosta
-  o	Dodjeljivanje administratorskih ovlasti
-  o	Brisanje računa
+
+  -	Stvaranje novog korisničkog računa za gosta 
+  -	Dodjeljivanje administratorskih ovlasti  
+  -	Brisanje računa
+  
 -	Upravljanje recenzijama
-  o Stavljanje ili micanje recenzija sa naslovne stranice
-  o	Brisanje recenzija
+
+  - Stavljanje ili micanje recenzija sa naslovne stranice
+  -	Brisanje recenzija
 
 Napomene:
 -	Pri pokretanju aplikacije stvara se administratorksa “uloga” (role), te glavni administrator prema postavkama u appsettings.json. Ukoliko ništa ne mjenjate, email ce biti admin@mail.com, a lozinka Admin123;
