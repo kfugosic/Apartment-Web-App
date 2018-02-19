@@ -1,5 +1,6 @@
 # Apartment-Web-App
 C# Course @ FER - Final project - Apartment Web App
+
 http://mydream-krk.azurewebsites.net/
 
 
@@ -31,7 +32,7 @@ Mogućnosti administratora:
   - Brisanje recenzija
 
 Napomene:
--	Pri pokretanju aplikacije stvara se administratorksa “uloga” (role), te glavni administrator prema postavkama u appsettings.json. Ukoliko ništa ne mjenjate, email ce biti admin@mail.com, a lozinka Admin123;
+-	Pri pokretanju aplikacije stvara se administratorska “uloga” (role), te glavni administrator prema postavkama u appsettings.json. Prema inicijalnim postavkama email ce biti admin@mail.com, a lozinka Admin123;
 -	U appsettingsu se također može postaviti i defaultni jezik
 -	Od jezika su korisniku dostupni engleski i hrvatski, njemački je također predviđen ali sakriven sa naslovne strane jer prijevod nije bio dovršen
 -	Nažalost sav tekst za goste nije spreman te će se naknadno dodati
