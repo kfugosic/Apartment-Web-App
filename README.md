@@ -37,3 +37,8 @@ Napomene:
 -	Od jezika su korisniku dostupni engleski i hrvatski, njemački je također predviđen ali sakriven sa naslovne strane jer prijevod nije bio dovršen
 -	Nažalost sav tekst za goste nije spreman te će se naknadno dodati
 
+Projekt je izrađen korištenjem Asp.Net Core okvira.
+
+U izradi web aplikacije korištene su teme pod MIT licencom:
+- https://startbootstrap.com/template-overviews/creative/ 
+- https://startbootstrap.com/template-overviews/sb-admin/
